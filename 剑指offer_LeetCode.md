@@ -369,11 +369,143 @@
    }
    ```
 
-3. Contains Duplicate III (220)
+###### 2.3.2 字符串
 
-   > 
+> 面试题5 替换空格 
 
-   > 
+1. **leetcode 无
+
+   > Description
+
+   请实现一个函数，把字符串中的每个空格替换成“%20”.例如，输入“we are happy.”，则输出“we%20are%20happy”
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def replaceSpace(self, str):
+           # write code here
+           return str.replace(" ","%20")
+   ```
+
+   > Java_Code
+
+   ```java
+   //时间复杂度为o(n)
+   class Solution{
+       public static String replaceSpace2(StringBuffer str){
+                   if (string==null){
+               return null;
+           }
+           int oldLength=string.length;
+           int newLength = 0;
+           int spaceNum = 0;
+           for (char c : string) {
+               if (c==' ') {
+                   spaceNum++;
+               }
+           }
+           newLength = spaceNum*2+oldLength;
+           char[] tempArray = new char[newLength];
+           int indexOld = oldLength-1;
+           int indexNew = newLength-1;
+           while (indexOld >= 0 && indexOld != indexNew) {
+               if(string[indexOld]==' '){
+                   tempArray[indexNew--]='0';
+                   tempArray[indexNew--]='2';
+                   tempArray[indexNew--]='%';
+               }else {
+                   tempArray[indexNew--] =string[indexOld];
+               }
+               indexOld--;
+           }
+           for (int i = indexOld; i >=0; i--) {
+               tempArray[indexNew--] =string[i];
+   
+           }
+           StringBuilder stringBuilder = new StringBuilder();
+           for (char c : tempArray) {
+               stringBuilder.append(c);
+           }
+           return stringBuilder.toString();
+       }
+   } 
+   ```
+
+###### 2.3.3 链表
+
+> 面试题6 从尾到头打印链表
+
+1. **LeetCode 无
+
+   > Description
+
+   题目：输入一个链表的头结点，从尾到头反过来打印出每个结点的值。 
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       # 返回从尾部到头部的列表值序列，例如[1,2,3]
+       def printListFromTailToHead(self, listNode):
+           newlist =[]
+           while listNode is not None:
+               newlist.append(listNode.val)
+               listNode = listNode.next
+           return newlist[::-1]
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+       Stack<Integer> stack = new Stack<>();
+       while (listNode != null) {
+           stack.push(listNode.val);
+           listNode = listNode.next;
+       }
+       ArrayList<Integer> arrayList = new ArrayList<>();
+       while (!stack.isEmpty()) {
+           arrayList.add(stack.pop());
+       }
+       return arrayList;
+       } 
+   }
+   ```
+
+   
+
+###### 2.3.4 树
+
+> 面试题7 重建二叉树
+
+1. Construct Binary Tree from Preorder and Inorder Traversal （105）
+
+   > Description
+
+   Given preorder and inorder traversal of a tree, construct the binary tree.
+
+   **Note:**
+   You may assume that duplicates do not exist in the tree.
+
+   For example, given
+
+   ```
+   preorder = [3,9,20,15,7]
+   inorder = [9,3,15,20,7]
+   ```
+
+   Return the following binary tree:
+
+   ```
+       3
+      / \
+     9  20
+       /  \
+      15   7
+   ```
+
+   > Code_Python
 
    ```python
    
@@ -385,4 +517,18 @@
    
    ```
 
-> 面试题5 二维数组中的查找
+   
+
+> 面试题8 二叉树的下一个节点
+
+1. aaa
+
+   > Description
+
+
+
+
+
+####### 2.3.5 栈和队列
+
+> 面试题9 用两个栈实现队列
