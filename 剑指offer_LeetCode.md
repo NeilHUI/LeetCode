@@ -6,7 +6,7 @@
 
 > 面试题3 数组中重复的数字
 
- 1. Contains Duplicate (217)
+ 1. [Contains Duplicate](https://leetcode.com/problems/contains-duplicate)  (217)
 
     > Description
 
@@ -66,7 +66,7 @@
     }
     ```
 
- 2. Contains Duplicate II (219)
+ 2. [Contains Duplicate II](https://leetcode.com/problems/contains-duplicate-ii)  (219)
 
     > Description
 
@@ -133,7 +133,7 @@
 
     
 
- 3. Contains Duplicate III (220)
+ 3. [Contains Duplicate III](https://leetcode.com/problems/contains-duplicate-iii)  (220)
 
     > Description
 
@@ -210,7 +210,7 @@
 
 > 面试题4 二维数组中的查找
 
-1. Search a 2D Matrix (74)
+1. [Search a 2D Matrix](https://leetcode.com/problems/search-a-2d-matrix)  (74)
 
    > Description
 
@@ -290,7 +290,7 @@
    }
    ```
 
-2. Search a 2D Matrix II (240)
+2. [Search a 2D Matrix II](https://leetcode.com/problems/search-a-2d-matrix-ii)  (240)
 
    > Description
 
@@ -479,7 +479,7 @@
 
 > 面试题7 重建二叉树
 
-1. Construct Binary Tree from Preorder and Inorder Traversal （105）
+1. [Construct Binary Tree from Preorder and Inorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal) (105)
 
    > Description
 
@@ -508,6 +508,248 @@
    > Code_Python
 
    ```python
+   class Solution:
+       """
+       主要解题思路，使用递归的方法
+       1、前序遍历中第一个元素对应根节点（递归思路，每次都是根节点）
+       2、根节点在中序遍历中每次将中序遍历平分为两分，左边和右边分别对应一个新的子树
+       3、递归中止条件，当根节点再往下分子树，子树为空即结束递归
+       """
+       def buildTree(self, preorder, inorder):
+           """
+           :type preorder: List[int]
+           :type inorder: List[int]
+           :rtype: TreeNode
+           """
+           if (len(preorder) == 0 and len(inorder) == 0): return None
+           root = TreeNode(preorder[0])
+           pivot = inorder.index(preorder[0])
+           root.left = self.buildTree(preorder[1:pivot + 1], inorder[0:pivot])
+           root.right = self.buildTree(preorder[pivot + 1:], inorder[pivot + 1:])
+           return root
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public TreeNode buildTree(int[] preorder, int[] inorder) {
+           int start = 0;
+           int end = preorder.length-1;
+           return buildTreeStep(start,end,start,end,preorder,inorder);
+       }
+       //递归实现
+       public TreeNode buildTreeStep(int preStart ,int preEnd ,int inStart,int inEnd,int[] preorder,int[] inorder){
+           if (preEnd<preStart || inEnd<inStart) {
+               return null;
+           }
+           TreeNode treeNode = new TreeNode(preorder[preStart]);
+           int pivot  = getCurIndexInInOrder(inorder,inStart,inEnd,preorder[preStart]);
+           treeNode.left = buildTreeStep(preStart+1,pivot+preStart,inStart,inStart+pivot-1,preorder,inorder);
+           treeNode.right = buildTreeStep(preStart+pivot+1,preEnd,inStart+pivot+1,inEnd,preorder,inorder);
+           return treeNode;
+       }
+       //get pivot index
+       public int getCurIndexInInOrder(int[] inorder, int start, int end, int key){
+           for(int i=start; i<=end; i++){
+               if(inorder[i] == key) return i-start;
+           }
+           return -1;
+       }
+   }
+   ```
+
+2. [Construct Binary Tree from Inorder and Postorder Traversal](https://leetcode.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal) (106)
+
+   > Description
+
+   Given inorder and postorder traversal of a tree, construct the binary tree.
+
+   **Note:**
+   You may assume that duplicates do not exist in the tree.
+
+   For example, given
+
+   ```
+   inorder = [9,3,15,20,7]
+   postorder = [9,15,7,20,3]
+   ```
+
+   Return the following binary tree:
+
+   ```
+       3
+      / \
+     9  20
+       /  \
+      15   7
+   ```
+
+   > Code_Python
+
+   ```python
+   # Definition for a binary tree node.
+   # class TreeNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   
+   class Solution:
+       def buildTree(self, inorder, postorder):
+           """
+           :type inorder: List[int]
+           :type postorder: List[int]
+           :rtype: TreeNode
+           """
+           if not postorder or not inorder:return None
+           root_index = postorder.pop()
+           root = TreeNode(root_index)
+           pivot = inorder.index(root_index)
+           root.right=self.buildTree(inorder[pivot+1:],postorder[pivot:])
+           root.left=self.buildTree(inorder[:pivot],postorder[:pivot])
+           return root
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for a binary tree node.
+    * public class TreeNode {
+    *     int val;
+    *     TreeNode left;
+    *     TreeNode right;
+    *     TreeNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public TreeNode buildTree(int[] inorder, int[] postorder) {
+           int start = 0;
+           int end = postorder.length-1;
+           return buildTreeStep(start,end,start,end,inorder,postorder);
+       }
+       //递归实现
+       public TreeNode buildTreeStep(int inStart ,int inEnd ,int posStart,int posEnd,int[] inorder,int[] postorder){
+           if (inEnd<inStart || posEnd<posStart) {
+               return null;
+           }
+           TreeNode treeNode = new TreeNode(postorder[posEnd]);
+           int pivot  = getCurIndexInInOrder(inorder,inStart,inEnd,postorder[posEnd]);
+           treeNode.right = buildTreeStep(inStart+pivot+1,inEnd,posStart+pivot,posEnd-1,inorder,postorder);
+           treeNode.left = buildTreeStep(inStart,inStart+pivot-1,posStart,posStart+pivot-1,inorder,postorder);
+           return treeNode;
+       }
+       //get pivot index
+       public int getCurIndexInInOrder(int[] inorder, int start, int end, int key){
+           for(int i=start; i<=end; i++){
+               if(inorder[i] == key) return i-start;
+           }
+           return -1;
+       }
+   }
+   ```
+
+> 面试题8 二叉树的下一个节点
+
+1. LeetCode**无
+
+   > Description
+
+   给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。 
+
+   > Code_Python
+
+   ```python
+   class TreeLinkNode:
+       def __init__(self, x):
+           self.val = x
+           self.left = None
+           self.right = None
+           self.next = None
+   
+   class Solution1:
+       def GetNext(self,pNode):
+           if not pNode:
+               return None
+           if pNode.right:
+               pNode = pNode.right
+               while pNode.left is not None:
+                   pNode = pNode.left
+               return pNode
+           
+           while pNode.next is not None:
+               if pNode.next.left is pNode:
+                   return pNode.next
+               pNode == pNode.next
+           return None
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+       /**
+        * 如果有右子树，则找右子树的最左节点
+        * 没右子树，则找第一个当前节点是父节点左孩子的节点
+       */
+       TreeLinkNode GetNext(TreeLinkNode node)
+       {
+           if(node==null) return null;
+           if(node.right!=null){    
+               node = node.right;
+               while(node.left!=null) {
+                   node = node.left;
+               }
+               return node;
+           }
+           while(node.next!=null){ 
+               if(node.next.left==node) {
+                   return node.next;
+               }
+               node = node.next;
+           }
+           return null;   //退到了根节点仍没找到，则返回null
+       }
+   }
+   ```
+
+###### 2.3.5 栈和队列
+
+> 面试题9 用两个栈实现队列
+
+1. [Implement Queue using Stacks](https://leetcode.com/problems/implement-queue-using-stacks) (232)
+
+   > Description
+
+   Implement the following operations of a queue using stacks.
+
+   - push(x) -- Push element x to the back of queue.
+   - pop() -- Removes the element from in front of queue.
+   - peek() -- Get the front element.
+   - empty() -- Return whether the queue is empty.
+
+   **Example:**
+
+   ```
+   MyQueue queue = new MyQueue();
+   
+   queue.push(1);
+   queue.push(2);  
+   queue.peek();  // returns 1
+   queue.pop();   // returns 1
+   queue.empty(); // returns false
+   ```
+
+   **Notes:**
+
+   - You must use *only* standard operations of a stack -- which means only `push to top`, `peek/pop from top`, `size`, and `is empty`operations are valid.
+   - Depending on your language, stack may not be supported natively. You may simulate a stack by using a list or deque (double-ended queue), as long as you use only standard operations of a stack.
+   - You may assume that all operations are valid (for example, no pop or peek operations will be called on an empty queue).
+
+   > Code_Python
+
+   ```python
    
    ```
 
@@ -519,16 +761,13 @@
 
    
 
-> 面试题8 二叉树的下一个节点
-
-1. aaa
+2. [Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues) (225)
 
    > Description
 
+   
 
+###### 2.4.1 递归和循环
 
+> 面试题10 斐波那契(Fibonacci sequence )数列
 
-
-####### 2.3.5 栈和队列
-
-> 面试题9 用两个栈实现队列
