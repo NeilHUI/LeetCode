@@ -750,13 +750,110 @@
    > Code_Python
 
    ```python
+   class MyQueue:
    
+       def __init__(self):
+           """
+           Initialize your data structure here.
+           """
+           self.in_stack = []
+           self.out_stack = []
+   
+       def push(self, x):
+           """
+           Push element x to the back of queue.
+           :type x: int
+           :rtype: void
+           """
+           self.in_stack.append(x)
+   
+       def pop(self):
+           """
+           Removes the element from in front of queue and returns that element.
+           :rtype: int
+           """
+           x = self.peek()
+           self.out_stack.pop()   
+           return x
+   
+       def peek(self):
+           """
+           Get the front element.
+           :rtype: int
+           """
+           if not self.out_stack:
+               while self.in_stack:
+                   self.out_stack.append(self.in_stack.pop())
+           return self.out_stack[-1]
+   
+       def empty(self):
+           """
+           Returns whether the queue is empty.
+           :rtype: bool
+           """
+           return (not self.in_stack and not self.out_stack)
+           
+   
+   
+   # Your MyQueue object will be instantiated and called as such:
+   # obj = MyQueue()
+   # obj.push(x)
+   # param_2 = obj.pop()
+   # param_3 = obj.peek()
+   # param_4 = obj.empty()
    ```
 
    > Code_Java
 
    ```java
+   class MyQueue {
+       Stack<Integer> inStack;
+       Stack<Integer> outStack;
+       /** Initialize your data structure here. */
+       public MyQueue() {
+           inStack = new Stack<>();
+           outStack = new Stack<>();
+       }
    
+       /** Push element x to the back of queue. */
+       public void push(int x) {
+           if (inStack.isEmpty()){
+               inStack.push(x);
+           }else {
+               while (!inStack.isEmpty()){
+                   outStack.push(inStack.pop());
+               }
+               inStack.push(x);
+               while (!outStack.isEmpty()) {
+                   inStack.push(outStack.pop());
+               }
+           }
+       }
+   
+       /** Removes the element from in front of queue and returns that element. */
+       public int pop() {
+           return inStack.pop();
+       }
+   
+       /** Get the front element. */
+       public int peek() {
+           return inStack.peek();
+       }
+   
+       /** Returns whether the queue is empty. */
+       public boolean empty() {
+           return (inStack.isEmpty());
+       }
+   }
+   
+   /**
+    * Your MyQueue object will be instantiated and called as such:
+    * MyQueue obj = new MyQueue();
+    * obj.push(x);
+    * int param_2 = obj.pop();
+    * int param_3 = obj.peek();
+    * boolean param_4 = obj.empty();
+    */
    ```
 
    
@@ -765,9 +862,618 @@
 
    > Description
 
+   Implement the following operations of a stack using queues.
+
+   - push(x) -- Push element x onto stack.
+   - pop() -- Removes the element on top of the stack.
+   - top() -- Get the top element.
+   - empty() -- Return whether the stack is empty.
+
+   **Example:**
+
+   ```
+   MyStack stack = new MyStack();
    
+   stack.push(1);
+   stack.push(2);  
+   stack.top();   // returns 2
+   stack.pop();   // returns 2
+   stack.empty(); // returns false
+   ```
+
+   **Notes:**
+
+   - You must use *only* standard operations of a queue -- which means only `push to back`, `peek/pop from front`, `size`, and `is empty` operations are valid.
+   - Depending on your language, queue may not be supported natively. You may simulate a queue by using a list or deque (double-ended queue), as long as you use only standard operations of a queue.
+   - You may assume that all operations are valid (for example, no pop or top operations will be called on an empty stack).
+
+   > Code_Python
+
+   ```python
+   class MyStack:
+   
+       def __init__(self):
+           """
+           Initialize your data structure here.
+           """
+           self.queue_1 = []
+           self.queue_2 = []
+       def push(self, x):
+           """
+           Push element x onto stack.
+           :type x: int
+           :rtype: void
+           """
+           if self.queue_1:
+               self.queue_1.append(x)
+           else:
+               self.queue_2.append(x)
+   
+       def pop(self):
+           """
+           Removes the element on top of the stack and returns that element.
+           :rtype: int
+           """
+           if self.queue_1:
+               for q in range(0,len(self.queue_1)-1):
+                   self.queue_2.append(self.queue_1.pop(0))
+               return self.queue_1.pop(0)
+           else:
+               for q in range(0,len(self.queue_2)-1):
+                   self.queue_1.append(self.queue_2.pop(0))
+               return self.queue_2.pop(0)
+   
+       def top(self):
+           """
+           Get the top element.
+           :rtype: int
+           """
+           if self.queue_1:
+               for q in range(0,len(self.queue_1)-1):
+                   self.queue_2.append(self.queue_1.pop(0))
+               temp = self.queue_1.pop(0)
+               self.queue_2.append(temp)
+               return temp
+           else:
+               for q in range(0,len(self.queue_2)-1):
+                   self.queue_1.append(self.queue_2.pop(0))
+               temp = self.queue_2.pop(0)
+               self.queue_1.append(temp)
+               return temp
+       def empty(self):
+           """
+           Returns whether the stack is empty.
+           :rtype: bool
+           """
+           return (not self.queue_1 and not self.queue_2)
+   
+   # Your MyStack object will be instantiated and called as such:
+   # obj = MyStack()
+   # obj.push(x)
+   # param_2 = obj.pop()
+   # param_3 = obj.top()
+   # param_4 = obj.empty()
+   ```
+
+   > Code_Java
+
+   ```java
+   class MyStack {
+   
+       //Queue使用时要尽量避免Collection的add()和remove()方法，而是要使用offer()来加入元素，使用poll()来获取并移出元素。
+       Queue<Integer> queue1;
+       Queue<Integer> queue2;
+       /** Initialize your data structure here. */
+       public MyStack() {
+           queue1 = new LinkedList<>();
+           queue2 = new LinkedList<>();
+       }
+   
+       /** Push element x onto stack. */
+       public void push(int x) {
+           if (!queue1.isEmpty()){
+               queue1.offer(x);
+           }else {
+               queue2.offer(x);
+           }
+       }
+   
+       /** Removes the element on top of the stack and returns that element. */
+       public int pop() {
+           if (!queue1.isEmpty()){
+               int length = queue1.size();
+               for (int i = 0; i < length-1; i++) {
+                   queue2.offer(queue1.poll());
+               }
+               return queue1.poll();
+           }else {
+               int length = queue2.size();
+               for (int i = 0; i < length-1; i++) {
+                   queue1.offer(queue2.poll());
+               }
+               return queue2.poll();
+           }
+       }
+   
+       /** Get the top element. */
+       public int top() {
+           
+           if (!queue1.isEmpty()){
+               int length = queue1.size();
+               for (int i = 0; i < length-1; i++) {
+                   queue2.offer(queue1.poll());
+               }
+               int temp = queue1.poll();
+               queue2.offer(temp);
+               return temp;
+           }else {
+               int length = queue2.size();
+               for (int i = 0; i < length-1; i++) {
+                   queue1.offer(queue2.poll());
+               }
+               int temp = queue2.poll();
+               queue1.offer(temp);
+               return temp;
+           }
+   
+       }
+   
+       /** Returns whether the stack is empty. */
+       public boolean empty() {
+           return (queue1.size()==0 && queue2.size()==0);
+       }
+   }
+   
+   /**
+    * Your MyStack object will be instantiated and called as such:
+    * MyStack obj = new MyStack();
+    * obj.push(x);
+    * int param_2 = obj.pop();
+    * int param_3 = obj.top();
+    * boolean param_4 = obj.empty();
+    */
+   ```
 
 ###### 2.4.1 递归和循环
 
 > 面试题10 斐波那契(Fibonacci sequence )数列
 
+1. [Climbing Stairs](https://leetcode.com/problems/climbing-stairs) (70)
+
+   > Description
+
+   You are climbing a stair case. It takes *n* steps to reach to the top.
+
+   Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+   **Note:** Given *n* will be a positive integer.
+
+   **Example 1:**
+
+   ```
+   Input: 2
+   Output: 2
+   Explanation: There are two ways to climb to the top.
+   1. 1 step + 1 step
+   2. 2 steps
+   ```
+
+   **Example 2:**
+
+   ```
+   Input: 3
+   Output: 3
+   Explanation: There are three ways to climb to the top.
+   1. 1 step + 1 step + 1 step
+   2. 1 step + 2 steps
+   3. 2 steps + 1 step
+   ```
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       '''
+       递归实现，时间复杂度过高，使用循环实现，循环实现思路，
+       通过f(0)+f(1)=f(2)计算f(3)=f(2)+f(1) ...
+       '''
+       def climbStairs(self, n):
+           """
+           :type n: int
+           :rtype: int
+           """
+           if n < 2: return n
+           fibNMinusOne = 1
+           fibNMinusTwo = 0
+           fibN = 0
+           for _ in range(n):
+               fibN = fibNMinusOne + fibNMinusTwo
+               fibNMinusTwo = fibNMinusOne
+               fibNMinusOne = fibN
+           return fibN
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public int climbStairs(int n) {
+           if (n<2){
+               return n;
+           }
+           int fibNMinusOne = 1;
+           int fibNMinusTwo = 0;
+           int fibN = 0;
+           for (int i=1;i<=n;++i){
+               fibN = fibNMinusOne+fibNMinusTwo;
+               fibNMinusTwo = fibNMinusOne;
+               fibNMinusOne=fibN;
+           }
+           return fibN;
+       }
+   }
+   ```
+
+###### 2.4.2 查找和排序
+
+> 面试题11：旋转数组的最小数字
+
+1. [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array) (153)
+
+   > Description
+
+   Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+   (i.e.,  `[0,1,2,4,5,6,7]` might become  `[4,5,6,7,0,1,2]`).
+
+   Find the minimum element.
+
+   You may assume no duplicate exists in the array.
+
+   **Example 1:**
+
+   ```
+   Input: [3,4,5,1,2] 
+   Output: 1
+   ```
+
+   **Example 2:**
+
+   ```
+   Input: [4,5,6,7,0,1,2]
+   Output: 0
+   ```
+
+   > Code_Python
+
+   ```python
+   def findMin(nums):
+       """
+       :type nums: List[int]
+       :rtype: int
+       """
+       if not nums:
+           return nums
+       start = 0
+       end = len(nums) - 1
+       while start <= end:
+           mid = int((start + end) / 2)
+           if nums[start] <= nums[end]:
+               return nums[start]
+           elif nums[start] > nums[mid]:
+               end = mid
+           else:
+               start = mid + 1
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public int findMin(int[] nums) {
+            int start = 0;
+           int end = nums.length - 1;
+           int mid = 0;
+           while (start <= end) {
+               mid = (start+end)/2;
+               if (nums[start] <= nums[end]) {
+                   return nums[start];
+               } else if (nums[start] > nums[mid]) {
+                   end = mid;
+               } else {
+                   start = mid + 1;
+               }
+           }
+           return -1;
+       }
+   }
+   ```
+
+   
+
+2. [Find Minimum in Rotated Sorted Array II](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii) (154)
+
+   > Description
+
+   Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+   (i.e.,  `[0,1,2,4,5,6,7]` might become  `[4,5,6,7,0,1,2]`).
+
+   Find the minimum element.
+
+   The array may contain duplicates.
+
+   **Example 1:**
+
+   ```
+   Input: [1,3,5]
+   Output: 1
+   ```
+
+   **Example 2:**
+
+   ```
+   Input: [2,2,2,0,1]
+   Output: 0
+   ```
+
+   **Note:**
+
+   - This is a follow up problem to [Find Minimum in Rotated Sorted Array](https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/description/).
+   - Would allow duplicates affect the run-time complexity? How and why?
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def findMin(self, nums):
+           """
+           :type nums: List[int]
+           :rtype: int
+           """
+           if not nums:
+               return nums
+           start = 0
+           end = len(nums) - 1
+           while start <= end:
+               mid = int((start + end) / 2)
+               # 判断[3,1,3]情况
+               if(nums[start]==nums[end]):
+                   for i in range(start,end):
+                       if nums[i]<nums[start]:
+                           return nums[i]
+                   return nums[start]
+               if (nums[start] <nums[end]) :
+                   return nums[start]
+               elif nums[start] > nums[mid]:
+                   end = mid
+               else:
+                   start = mid+1
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public int findMin(int[] nums) {
+           int start = 0;
+           int end = nums.length - 1;
+           int mid = 0;
+           while (start <= end) {
+               mid = (start + end) / 2;
+               if (nums[start]==nums[end]){
+                   for (int i = start ;i<end;++i){
+                       if (nums[i]<nums[start]){
+                           return nums[i];
+                       }
+                   }
+                   return nums[start];
+               }
+               if (nums[start] < nums[end]) {
+                   return nums[start];
+               } else if (nums[start] > nums[mid]) {
+                   end = mid;
+               } else {
+                   start = mid + 1;
+               }
+           }
+           return -1;
+       }
+   }
+   ```
+
+###### 2.4.3 回溯法
+
+> 面试题12：矩阵中的路径
+
+1. [Unique Paths](https://leetcode.com/problems/unique-paths) (62)
+
+   > Description
+
+   A robot is located at the top-left corner of a *m* x *n* grid (marked 'Start' in the diagram below).
+
+   The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+   How many possible unique paths are there?
+
+   ![img](https://leetcode.com/static/images/problemset/robot_maze.png)
+   Above is a 7 x 3 grid. How many possible unique paths are there?
+
+   **Note:** *m* and *n* will be at most 100.
+
+   **Example 1:**
+
+   ```
+   Input: m = 3, n = 2
+   Output: 3
+   Explanation:
+   From the top-left corner, there are a total of 3 ways to reach the bottom-right corner:
+   1. Right -> Right -> Down
+   2. Right -> Down -> Right
+   3. Down -> Right -> Right
+   ```
+
+   **Example 2:**
+
+   ```
+   Input: m = 7, n = 3
+   Output: 28
+   ```
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def uniquePaths(self, m, n):
+           """
+           :type m: int
+           :type n: int
+           :rtype: int
+           """
+           map_all = []
+           # 第一步先给边界点赋值为1
+           for col in range(n):
+               row_map = []
+               for row in range(m):
+                   if row == 0 or col == 0:
+                       temp = 1
+                   else:
+                       temp = 0
+                   row_map.append(temp)
+               map_all.append(row_map)
+           # 计算夹角值，等于左边和上边值得和
+           for i in range(1,n):
+               for j in range(1,m):
+                   map_all[i][j] = map_all[i][j - 1] + map_all[i - 1][j]
+           return map_all[n-1][m-1]
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public int uniquePaths(int m, int n) {
+           int[][] map = new int[m][n];
+           for (int i = 0; i < m; i++) {
+               map[i][0] = 1;
+           }
+           for (int i = 0; i < n; i++) {
+               map[0][i] = 1;
+           }
+           for (int i = 1; i < m; i++) {
+               for (int j = 1; j < n; j++) {
+                   map[i][j] = map[i - 1][j] + map[i][j - 1];
+               }
+           }
+           return map[m - 1][n - 1];
+       }
+   }
+   ```
+
+2. [Unique Paths II](https://leetcode.com/problems/unique-paths-ii) (63)
+
+   > Description
+
+   A robot is located at the top-left corner of a *m* x *n* grid (marked 'Start' in the diagram below).
+
+   The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+   Now consider if some obstacles are added to the grids. How many unique paths would there be?
+
+   ![img](https://leetcode.com/static/images/problemset/robot_maze.png)
+
+   An obstacle and empty space is marked as `1` and `0` respectively in the grid.
+
+   **Note:** *m* and *n* will be at most 100.
+
+   **Example 1:**
+
+   ```
+   Input:
+   [
+     [0,0,0],
+     [0,1,0],
+     [0,0,0]
+   ]
+   Output: 2
+   Explanation:
+   There is one obstacle in the middle of the 3x3 grid above.
+   There are two ways to reach the bottom-right corner:
+   1. Right -> Right -> Down -> Down
+   2. Down -> Down -> Right -> Right
+   ```
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def uniquePathsWithObstacles(self, obstacleGrid):
+           """
+           :type obstacleGrid: List[List[int]]
+           :rtype: int
+           """
+           m = len(obstacleGrid)
+           n = len(obstacleGrid[0])
+           map_all = []
+           for col in range(n):
+               row_map = []
+               for row in range(m):
+                   if row == 0 or col == 0:
+                       temp = 1
+                   else:
+                       temp = 0
+                   row_map.append(temp)
+               map_all.append(row_map)
+           if obstacleGrid[0][0]==0:
+               map_all[0][0] = 1
+           else:map_all[0][0] = 0
+           for i in range(1,m):
+               map_all[i][0]=(0 if obstacleGrid[i][0]==1 else map_all[i-1][0])
+           for j in range(1,n):
+               map_all[0][j]=(0 if obstacleGrid[0][j]==1 else map_all[0][j-1])
+           for i in range(1,m):
+               for j in range(1,n):
+                   map_all[i][j] =(0 if obstacleGrid[i][j]==1 else map_all[i-1][j]+map_all[i][j-1])
+           return map_all[m-1][n-1]
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+           int m = obstacleGrid.length;
+           int n = obstacleGrid[0].length;
+           int[][] map= new int[m][n];
+           if(obstacleGrid[0][0]==0){
+               map[0][0]=1;
+           }else{
+               map[0][0]=0;
+           }
+           
+           for(int i = 1;i<m;i++){
+               map[i][0]=(obstacleGrid[i][0]==1)? 0:map[i-1][0];
+           }
+           for(int j = 1;j<n;j++){
+               map[0][j] =(obstacleGrid[0][j]==1)? 0: map[0][j-1];
+           }
+           for(int i = 1;i<m;i++){
+               for(int j =1;j<n;j++){
+                   map[i][j] =(obstacleGrid[i][j]==1)? 0: map[i-1][j]+map[i][j-1];
+               }
+           }
+           return map[m-1][n-1];
+       }
+   
+   }
+   ```
+
+   
+
+> 面试题13：机器人的运动范围
+
+
+
+###### 2.4.4 动态规划与贪婪算法
+
+> 面试题14：剪绳子
