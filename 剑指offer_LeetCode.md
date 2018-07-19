@@ -1332,9 +1332,9 @@
            """
            map_all = []
            # 第一步先给边界点赋值为1
-           for col in range(n):
+           for col in range(m):
                row_map = []
-               for row in range(m):
+               for row in range(n):
                    if row == 0 or col == 0:
                        temp = 1
                    else:
@@ -1342,10 +1342,10 @@
                    row_map.append(temp)
                map_all.append(row_map)
            # 计算夹角值，等于左边和上边值得和
-           for i in range(1,n):
-               for j in range(1,m):
+           for i in range(1,m):
+               for j in range(1,n):
                    map_all[i][j] = map_all[i][j - 1] + map_all[i - 1][j]
-           return map_all[n-1][m-1]
+           return map_all[m-1][n-1]
    ```
 
    > Code_Java
@@ -1414,27 +1414,21 @@
            """
            m = len(obstacleGrid)
            n = len(obstacleGrid[0])
-           map_all = []
-           for col in range(n):
-               row_map = []
-               for row in range(m):
-                   if row == 0 or col == 0:
-                       temp = 1
+           dp = [[0]*n]*m
+           for i in range(m):
+               for j in range(n):
+                   if obstacleGrid[i][j] == 0:
+                       if i==0 and j==0:
+                           dp[i][j] = 1
+                       elif i==0:
+                           dp[i][j] = dp[i][j-1]
+                       elif j==0:
+                           dp[i][j] = dp[i-1][j]
+                       else:
+                           dp[i][j] = dp[i-1][j]+dp[i][j-1]
                    else:
-                       temp = 0
-                   row_map.append(temp)
-               map_all.append(row_map)
-           if obstacleGrid[0][0]==0:
-               map_all[0][0] = 1
-           else:map_all[0][0] = 0
-           for i in range(1,m):
-               map_all[i][0]=(0 if obstacleGrid[i][0]==1 else map_all[i-1][0])
-           for j in range(1,n):
-               map_all[0][j]=(0 if obstacleGrid[0][j]==1 else map_all[0][j-1])
-           for i in range(1,m):
-               for j in range(1,n):
-                   map_all[i][j] =(0 if obstacleGrid[i][j]==1 else map_all[i-1][j]+map_all[i][j-1])
-           return map_all[m-1][n-1]
+                       dp[i][j] = 0
+           return dp[m-1][n-1]
    ```
 
    > Code_Java
@@ -1472,8 +1466,294 @@
 
 > 面试题13：机器人的运动范围
 
+1. LeetCode**无
 
+   > Description
+
+   地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       #计算数字之和
+       def getDigitalSum(self, value):
+           sum=0
+           while value>=1:
+               sum+=value%10
+               value=int(value/10)
+           return sum
+   
+       def movingCountCore(self, threshold, rows, cols, row, col, visited):
+           count = 0
+           # 判断是否满足要求，即在边界范围内且未到达过并且数字之和合理
+           if row >= 0 and row < rows and col >= 0 and col < cols and visited[row*cols+col] and (self.getDigitalSum(col) + self.getDigitalSum(row) <= threshold):
+               visited[row * cols + col] = 0
+               count=1+self.movingCountCore(threshold,rows,cols,row-1,col,visited)+self.movingCountCore(threshold,rows,cols,row,col-1,visited)+self.movingCountCore(threshold,rows,cols,row+1,col,visited)+self.movingCountCore(threshold,rows,cols,row,col+1,visited)
+           return count
+   
+       def movingCount(self, threshold, rows, cols):
+           if threshold <0 or rows<0 or cols<0:return 0
+           # 0 false 1 true
+           visited = [1]*(rows*cols)
+           return self.movingCountCore(threshold,rows,cols,0,0,visited)
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+       public int movingCount(int threshold, int rows, int cols) {
+           if (threshold < 0) {
+               return 0;
+           }
+           boolean[] visited = new boolean[rows * cols];
+           int count = movingCountCore(threshold, rows, cols, 0, 0, visited);
+           return count;
+       }
+   
+       private int movingCountCore(int threshold, int rows, int cols, int row, int col, boolean[] visited) {
+           int count = 0;
+           //判断是否满足要求，即在边界范围内且未到达过并且数字之和合理
+           if (row >= 0 && row < rows && col >= cols && col < cols && visited[row * cols + col] == false && getDigitalSum(col) + getDigitalSum(row) <= threshold) {
+               visited[row * cols + col] = true;
+               count = 1 + movingCountCore(threshold, rows, cols, row + 1, col, visited) + movingCountCore(threshold, rows, cols, row - 1, col, visited) + movingCountCore(threshold, rows, cols, row, col + 1, visited)
+                       + movingCountCore(threshold, rows, cols, row, col - 1, visited);
+           }
+           return count;
+       }
+   
+       /**
+        * 计算数字各个位之和
+        *
+        * @param value 需要求和的数字
+        * @return 返回数字之和
+        */
+       private int getDigitalSum(int value) {
+           int sum = 0;
+           while (value != 0) {
+               sum += value % 10;
+               value = value / 10;
+           }
+           return sum;
+       }
+   
+   }
+   ```
 
 ###### 2.4.4 动态规划与贪婪算法
 
 > 面试题14：剪绳子
+
+1. LeetCode**无
+
+   > Description
+
+   给你一根长度为n的绳子，请把绳子剪成m段（m , n ）都是正整数，（n>1&m>1）
+
+   每段绳子的长度为k[0],k[1],k[2],...,k[m]。请问k[0]*k[1]*k[2]*...*k[m]的最大值。
+
+   例如绳子是长度为8，我们把它剪成的长度分别为2,3,3的三段，此时得到的最大的乘积是18。
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def maxProduct(self, length):
+           if length < 2:
+               return 0
+           if length < 4:
+               return length
+           # 构造一个n+1的列表因为0不用所以为n+1,暂存使用
+           products = [0] * (length+1)
+           products[0], products[1], products[2], products[3] = 0, 1, 2, 3
+           for i in range(4, length+1):
+               max = 0
+               for j in range(1, int(i / 2)+1):
+                   # 在剪第一刀的时候，又n-2中可能的选择，也就是剪出来的绳子的可能长度分别为1，2，...n，因此f(n)=max(f(i)*f(n-i))
+                   product = products[j] * products[i - j]
+                   if max < product:
+                       max = product
+                   products[i] = max
+           return products[-1]
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+       public static int maxProduct(int length){
+           if (length < 2) {
+               return 0;
+           }
+           if (length < 4) {
+               return length;
+           }
+           int[] products =new int[length+1];
+           products[0] = 0;
+           products[1] = 1;
+           products[2] = 2;
+           products[3] = 3;
+           int max = 0 ;
+           for (int i = 4; i <= length; i++) {
+               max =0;
+               for (int j = 1; j <= i/2; j++) {
+                   int product = products[j] * products[i - j];
+   
+                   if (max  < product) {
+                       max = product;
+                   }
+                   products[i]=max;
+               }
+           }
+           return products[length];
+   
+       } 
+   ```
+
+   
+
+###### 2.4.5 位运算
+
+> 面试题15：二进制中1的个数
+
+1. [Number of 1 Bits](https://leetcode.com/problems/number-of-1-bits) (191)
+
+   > Description
+
+   Write a function that takes an unsigned integer and returns the number of '1' bits it has (also known as the [Hamming weight](http://en.wikipedia.org/wiki/Hamming_weight)).
+
+   **Example 1:**
+
+   ```
+   Input: 11
+   Output: 3
+   Explanation: Integer 11 has binary representation 00000000000000000000000000001011 
+   ```
+
+   **Example 2:**
+
+   ```
+   Input: 128
+   Output: 1
+   Explanation: Integer 128 has binary representation 00000000000000000000000010000000
+   ```
+
+   > Code_Python
+
+   ```python
+   class Solution(object):
+       def hammingWeight(self, n):
+           """
+           :type n: int
+           :rtype: int
+           """
+           count = 0
+           while n:
+               count+=1
+               n=n&(n-1)
+           return count
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+       // you need to treat n as an unsigned value
+       public int hammingWeight(int n) {
+           int total = 0;
+           while (n != 0) {
+               total++;
+               n=n&(n-1);
+           }
+           return total;
+       }
+   }
+   ```
+
+###### 3.3 代码的完整性
+
+> 面试题16：数值的整数次方
+
+1. [Pow(x, n)](https://leetcode.com/problems/powx-n) (50) 
+
+   > Description
+
+   Implement [pow(*x*, *n*)](http://www.cplusplus.com/reference/valarray/pow/), which calculates *x* raised to the power *n* (xn).
+
+   **Example 1:**
+
+   ```
+   Input: 2.00000, 10
+   Output: 1024.00000
+   ```
+
+   **Example 2:**
+
+   ```
+   Input: 2.10000, 3
+   Output: 9.26100
+   ```
+
+   **Example 3:**
+
+   ```
+   Input: 2.00000, -2
+   Output: 0.25000
+   Explanation: 2-2 = 1/22 = 1/4 = 0.25
+   ```
+
+   **Note:**
+
+   - -100.0 < *x* < 100.0
+   - *n* is a 32-bit signed integer, within the range [−231, 231 − 1]
+
+   > Code_Python
+
+   ```python
+   class Solution(object):
+       def myPow(self, x, n):
+           """
+           :type x: float
+           :type n: int
+           :rtype: float
+           """
+           if n<0:x,n=1/x,-n
+           res = 1
+           while n>0:
+               if n%2!=0:
+                   res *=x
+               x*=x
+               n=n//2
+           return res
+           
+   ```
+
+   > Code_Java
+
+   ```java
+   class Solution {
+       public double myPow(double x, int n) {
+           long N = n;
+           if (N<0){
+               x=1/x;
+               N = -N;
+           }
+           double result = 1;
+           while (N > 0) {
+               if (N % 2 == 1) {
+                   result = result*x;
+               }
+               N = N/2;
+               x=x*x;
+           }
+           return result;
+       }
+   }
+   ```
+
+   
+
+ 
+
+ 
