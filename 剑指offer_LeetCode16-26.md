@@ -468,6 +468,8 @@
    }
    ```
 
+###### 3.4代码的鲁棒性
+
 > 面试题22：链表中倒数第k个节点
 
 1. LeetCode**无
@@ -675,4 +677,274 @@
    }
    ```
 
+> 面试题24：反转链表
+
+1. [Reverse Linked List](https://leetcode.com/problems/reverse-linked-list) (206)
+
+   > Description
+
+   Reverse a singly linked list.
+
+   **Example:**
+
+   ```
+   Input: 1->2->3->4->5->NULL
+   Output: 5->4->3->2->1->NULL
+   ```
+
+   > Code_Python
+
+   ```python
+   # Definition for singly-linked list.
+   # class ListNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.next = None
    
+   class Solution:
+       def reverseList(self, head):
+           """
+           :type head: ListNode
+           :rtype: ListNode
+           """
+           # 如果节点为空
+           if not head:return None
+           p_node = head
+           p_reversed_head = None
+           p_prev = None
+           while p_node:
+               p_next = p_node.next
+               # 节点不为空则开始替换当前节点
+               if p_node:
+                   p_reversed_head = p_node
+               p_node.next = p_prev
+               p_prev = p_node
+               p_node = p_next
+               
+           return p_reversed_head
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for singly-linked list.
+    * public class ListNode {
+    *     int val;
+    *     ListNode next;
+    *     ListNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public ListNode reverseList(ListNode head) {
+       	ListNode pre = null;
+           while(head != null){
+               ListNode cur = head;
+               head = head.next;
+               cur.next = pre;
+               pre = cur;
+           }
+           return pre;
+       }
+   }
+   ```
+
+> 面试题25：合并两个排序的链表
+
+1. [Merge Two Sorted Lists](https://leetcode.com/problems/merge-two-sorted-lists) (21)
+
+   Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
+
+   **Example:**
+
+   ```
+   Input: 1->2->4, 1->3->4
+   Output: 1->1->2->3->4->4 
+   ```
+
+   > Code_Python
+
+   ```python
+   # Definition for singly-linked list.
+   # class ListNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.next = None
+   
+   class Solution:
+       def mergeTwoLists(self, l1, l2):
+           """
+           :type l1: ListNode
+           :type l2: ListNode
+           :rtype: ListNode
+           """
+           if not l1:return l2
+           if not l2:return l1
+           if l1.val>l2.val:
+               head =l2
+               l2 = l2.next
+           else:
+               head = l1
+               l1 = l1.next
+           result = head
+           while l1 and l2:
+               if l1.val>l2.val:
+                   head.next = l2
+                   l2 = l2.next
+                   head = head.next
+               else:
+                   head.next = l1
+                   l1 = l1.next
+                   head = head.next
+           if l1:head.next = l1
+           if l2:head.next = l2
+           return result
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for singly-linked list.
+    * public class ListNode {
+    *     int val;
+    *     ListNode next;
+    *     ListNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+           if(l1==null){return l2;}
+           if(l2==null){return l1;}
+           ListNode mergeNode = null;
+           if(l1.val>l2.val){
+               mergeNode = l2;
+               l2 = l2.next;
+           }else{
+               mergeNode = l1;
+               l1 = l1.next;
+           }
+           ListNode result = mergeNode;
+           while(l1 != null && l2 != null){
+               if (l1.val > l2.val){
+                   mergeNode.next = l2;
+                   l2 = l2.next;
+                   mergeNode = mergeNode.next;
+               }else{
+                   mergeNode.next = l1;
+                   l1 = l1.next;
+                   mergeNode = mergeNode.next;
+               }
+           }
+           if(l1!=null){mergeNode.next = l1;}
+           if(l2!=null){mergeNode.next = l2;}
+           return result;
+       }
+   }
+   ```
+
+> 面试题26：树的子结构
+
+1. [Subtree of Another Tree](https://leetcode.com/problems/subtree-of-another-tree) (572)
+
+   > Description
+
+   Given two non-empty binary trees **s** and **t**, check whether tree **t** has exactly the same structure and node values with a subtree of **s**. A subtree of **s** is a tree consists of a node in **s** and all of this node's descendants. The tree **s** could also be considered as a subtree of itself.
+
+   **Example 1:**
+   Given tree s:
+
+   ```
+        3
+       / \
+      4   5
+     / \
+    1   2
+   ```
+
+   Given tree t:
+
+   ```
+      4 
+     / \
+    1   2
+   ```
+
+   Return true, because t has the same structure and node values with a subtree of s.
+
+   **Example 2:**
+   Given tree s:
+
+   ```
+        3
+       / \
+      4   5
+     / \
+    1   2
+       /
+      0
+   ```
+
+   Given tree t:
+
+   ```
+      4
+     / \
+    1   2
+   ```
+
+   Return false
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def is_same(self,s,t):
+           if not s and not t:return True
+           if not s or not t:return False
+           if s.val != t.val:return False
+           return self.is_same(s.left,t.left) and self.is_same(s.right,t.right)
+       def isSubtree(self, s, t):
+           """
+           :type s: TreeNode
+           :type t: TreeNode
+           :rtype: bool
+           """
+           if not s:return False
+           if self.is_same(s,t):return True
+           return self.isSubtree(s.left,t) or self.isSubtree(s.right,t)
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for a binary tree node.
+    * public class TreeNode {
+    *     int val;
+    *     TreeNode left;
+    *     TreeNode right;
+    *     TreeNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public boolean isSubtree(TreeNode s, TreeNode t) {
+           //如果树为空，则s为空，则返回false
+           if(s == null){return false;}
+           //如果子树匹配，则返回true
+           if(isSame(s,t)){return true;}
+           return isSubtree(s.left,t) || isSubtree(s.right,t);
+       }
+       //判断子树是否相同
+       public boolean isSame(TreeNode s,TreeNode t){
+           //如果遍历到最后为空，则返回true
+           if(s==null && t==null){return true;}
+           //如果一个为空另一个非空则返回false
+           if(s==null || t==null){return false;}
+           //如果两个值不同则返回false
+           if(s.val != t.val){return false;}
+           //依次遍历左子树喝右子树
+           return (isSame(s.left,t.left) && isSame(s.right,t.right));
+       }
+   }
+   ```
