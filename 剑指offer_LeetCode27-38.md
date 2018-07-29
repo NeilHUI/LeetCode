@@ -277,8 +277,7 @@
                        res.add(matrix[row][left]);
                    left++;
                }
-           }
-            
+           } 
            return res;
        }
    }　　
@@ -287,3 +286,192 @@
 ###### 4.3举例让抽象问题具体化
 
 > 面试题30：包含min函数的栈
+
+1. [Min Stack](https://leetcode.com/problems/min-stack) (155)
+
+   > Description
+
+   Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+   - push(x) -- Push element x onto stack.
+   - pop() -- Removes the element on top of the stack.
+   - top() -- Get the top element.
+   - getMin() -- Retrieve the minimum element in the stack.
+
+   **Example:**
+
+   ```
+   MinStack minStack = new MinStack();
+   minStack.push(-2);
+   minStack.push(0);
+   minStack.push(-3);
+   minStack.getMin();   --> Returns -3.
+   minStack.pop();
+   minStack.top();      --> Returns 0.
+   minStack.getMin();   --> Returns -2.
+   ```
+
+   > Code_Python
+
+   ```python
+   class MinStack:
+   
+       def __init__(self):
+           """
+           initialize your data structure here.
+           """
+           self._min_stack = []
+           self._patch_min_stack = []
+   
+       def push(self, x):
+           """
+           :type x: int
+           :rtype: void
+           """
+           self._min_stack.append(x)
+           self._patch_min_stack.append(x) if ( not len(self._patch_min_stack) or self._patch_min_stack[-1] > x) else self._patch_min_stack.append(self._patch_min_stack[-1])
+   
+       def pop(self):
+           """
+           :rtype: void
+           """
+           self._patch_min_stack.pop()
+           return self._min_stack.pop()
+   
+       def top(self):
+           """
+           :rtype: int
+           """
+           return self._min_stack[-1]
+   
+       def getMin(self):
+           """
+           :rtype: int
+           """
+           return self._patch_min_stack[-1] if len(self._patch_min_stack) else None
+           
+   
+   
+   # Your MinStack object will be instantiated and called as such:
+   # obj = MinStack()
+   # obj.push(x)
+   # obj.pop()
+   # param_3 = obj.top()
+   # param_4 = obj.getMin()
+   ```
+
+   > Code_Java
+
+   ```java
+   class MinStack {
+   
+       Stack<Integer> stack;
+       //存放最小值列表
+       Stack<Integer> patchStack;
+       /** initialize your data structure here. */
+       public MinStack() {
+           stack = new Stack<Integer>();
+           patchStack = new Stack<Integer>();
+       }
+       
+       public void push(int x) {
+           stack.push(x);
+           if(patchStack.empty() || patchStack.peek()>x){
+               patchStack.push(x);
+           }else{
+               patchStack.push(patchStack.peek());
+           }
+       }
+       
+       public void pop() {
+           patchStack.pop();
+           stack.pop();
+       }
+       
+       public int top() {
+           return stack.peek();
+       }
+       
+       public int getMin() {
+           return patchStack.peek();
+           
+       }
+   }
+   
+   /**
+    * Your MinStack object will be instantiated and called as such:
+    * MinStack obj = new MinStack();
+    * obj.push(x);
+    * obj.pop();
+    * int param_3 = obj.top();
+    * int param_4 = obj.getMin();
+    */
+   ```
+
+> 面试题31：栈的压入、弹出序列
+
+1. LeetCode**无
+
+   > Description
+
+   输入两个整数序列，第一个序列表示栈的压入顺序，请判断第二个序列是否为该栈的弹出顺序。假设压入栈的所有数字均不相等。例如序列1,2,3,4,5是某栈的压入顺序，序列4，5,3,2,1是该压栈序列对应的一个弹出序列，但4,3,5,1,2就不可能是该压栈序列的弹出序列。
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def IsPopOrder(self, pushV, popV):
+           # write code here
+           stack = []
+           if not pushV and popV:return True
+           patch_stack = [x for x in reversed(pushV)]
+           print(patch_stack)
+           for pop_a in popV:
+               if stack and pop_a == stack[-1]:
+                   stack.pop()
+               else:
+                   if pop_a not in patch_stack:return False
+                   else:
+                       while True:
+                           temp = patch_stack.pop()
+                           if temp == pop_a: break
+                           stack.append(temp)
+           return not stack
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+       public boolean IsPopOrder(int [] pushA,int [] popA) {
+           if(pushA.length == 0 || popA.length == 0)
+               return false;
+           Stack<Integer> s = new Stack<Integer>();
+           //用于标识弹出序列的位置
+           int popIndex = 0;
+           for(int i = 0; i< pushA.length;i++){
+               s.push(pushA[i]);
+               //如果栈不为空，且栈顶元素等于弹出序列
+               while(!s.empty() &&s.peek() == popA[popIndex]){
+                   //出栈
+                   s.pop();
+                   //弹出序列向后一位
+                   popIndex++;
+               }
+           }
+           //如果最后辅助栈为空则匹配成功
+           return s.empty();
+       }
+   }
+   ```
+
+> 面试题32：从上到下打印二叉树
+
+​	
+
+​		
+
+
+
+
+
