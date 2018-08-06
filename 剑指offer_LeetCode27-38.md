@@ -467,11 +467,704 @@
 
 > 面试题32：从上到下打印二叉树
 
-​	
+1. LeetCode**无
 
-​		
+   > Description
 
+   从上往下打印出二叉树的每个节点，同层节点从左至右打印。 
 
+   > Code_Python
 
+   ```python
+   class Solution:
+       def PrintFromTopToBottom(self,root):
+           result = []
+           if not root:return result
+           temp_nodes = []
+           temp_nodes.append(root)
+           while temp_nodes:
+               current_root = temp_nodes.pop(0)
+           	result.append(current_root.val)
+           	if current_root.left:
+                   temp_nodes.append(root.left)
+               if current_root.right:
+                   temp_nodes.append(root.right)
+            return result
+               
+   ```
 
+   > Code_Java
 
+   ```java
+   /**
+   public class TreeNode {
+       int val = 0;
+       TreeNode left = null;
+       TreeNode right = null;
+   
+       public TreeNode(int val) {
+           this.val = val;
+   
+       }
+   
+   }
+   */
+   public class Solution {
+       public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
+           ArrayList<Integer> resultList = new ArrayList<>();
+           if(root==null){return resultList;}
+           //用于暂时存放未遍历的节点
+           Queue<TreeNode> queue = new LinkedList<TreeNode>();
+           queue.offer(root);
+           while(!queue.isEmpty()){
+               TreeNode tempNode = queue.poll();
+               resultList.add(tempNode.val);
+               if(tempNode.left!=null){queue.offer(tempNode.left);}
+               if(tempNode.right!=null){queue.offer(tempNode.right);}
+           }
+           return resultList;
+       }
+   }
+   ```
+
+> 面试题33：二叉搜索树的后序遍历序列
+
+1. LeetCode**无
+
+   > Description
+
+   输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。 
+
+   > Code_Python
+
+   ```python
+   # -*- coding:utf-8 -*-
+   class Solution:
+       def VerifySquenceOfBST(self, sequence):
+           if not sequence or not len(sequence):return False
+           root = sequence[-1]
+           # 二叉搜索树中左子树节点的值小于根节点的值
+           i = 0
+           for i in range(len(sequence)):
+               if sequence[i]>root:break
+           # 二叉搜索树中右子树节点的值如果小于根节点的值，则返回false
+           for s in sequence[i:-1]:
+               if s<root:return False
+           # 判断左子树是不是二叉树
+           left_flag = True
+           if i:
+               left_flag = self.VerifySquenceOfBST(sequence[:i])
+           # 判断右子树是不是二叉树
+           right_flag = True
+           if i<len(sequence)-1:
+               right_flag = self.VerifySquenceOfBST(sequence[i:-1])
+           return left_flag and right_flag
+   ```
+
+   > Code_Java
+
+   ```java
+   public class Solution {
+        public boolean isBst(int[] arr, int start, int root) {
+           if (start >= root)
+               return true;
+           int index = start;
+           // 二叉搜索树中左子树节点的值小于根节点的值
+           while (arr[index] < arr[root] && index<root) {
+               index++;
+           }
+           // 判断右子树是否有数字小于root节点的值
+           for (int i = index ; i < root-1; i++) {
+               if (arr[i] < arr[root]) {
+                   return false;
+               }
+           }
+           // 遍历左右子树
+           return isBst(arr, start, index - 1) && isBst(arr, index, root - 1);
+       }
+        public boolean VerifySquenceOfBST(int [] sequence) {
+           if(sequence.length==0){
+               return false;
+           }
+           return isBst(sequence,0,sequence.length-1);
+       }
+   
+   }
+   ```
+
+> 面试题34：二叉树中和为某一值的路径
+
+1. [Path Sum](https://leetcode.com/problems/path-sum) (112)
+
+   > Description
+
+   Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
+
+   **Note:** A leaf is a node with no children.
+
+   **Example:**
+
+   Given the below binary tree and `sum = 22`,
+
+   ```
+         5
+        / \
+       4   8
+      /   / \
+     11  13  4
+    /  \      \
+   7    2      1
+   ```
+
+   return true, as there exist a root-to-leaf path `5->4->11->2` which sum is 22.
+
+   > Code_Python
+
+   ```python
+   # Definition for a binary tree node.
+   # class TreeNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   
+   class Solution:
+       def hasPathSum(self, root, sum):
+           """
+           :type root: TreeNode
+           :type sum: int
+           :rtype: bool
+           """
+           if not root:return False
+           if not root.left and not root.right and root.val == sum :return True
+           return self.hasPathSum(root.left,sum-root.val) or self.hasPathSum(root.right,sum-root.val)
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for a binary tree node.
+    * public class TreeNode {
+    *     int val;
+    *     TreeNode left;
+    *     TreeNode right;
+    *     TreeNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public boolean hasPathSum(TreeNode root, int sum) {
+           if(root==null){return false;}
+           if(root.left==null && root.right == null && root.val == sum){return true;}
+           return hasPathSum(root.left,sum-root.val) || hasPathSum(root.right,sum-root.val);
+       }
+   }
+   ```
+
+2. [Path Sum II](https://leetcode.com/problems/path-sum-ii) (113)
+
+   > Description
+
+   Given a binary tree and a sum, find all root-to-leaf paths where each path's sum equals the given sum.
+
+   **Note:** A leaf is a node with no children.
+
+   **Example:**
+
+   Given the below binary tree and `sum = 22`,
+
+   ```
+         5
+        / \
+       4   8
+      /   / \
+     11  13  4
+    /  \    / \
+   7    2  5   1
+   ```
+
+   Return:
+
+   ```
+   [
+      [5,4,11,2],
+      [5,8,4,5]
+   ]
+   ```
+
+   > Code_Python
+
+   ```python
+   # Definition for a binary tree node.
+   # class TreeNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   
+   class Solution:
+       def pathSum(self, root, sum):
+           """
+           :type root: TreeNode
+           :type sum: int
+           :rtype: List[List[int]]
+           """
+           def helper(root_temp, sum_temp ,list_temp):
+               if not root_temp.left and not root_temp.right and root_temp.val==sum_temp:
+                   result_lists.append(list_temp)
+               if root_temp.left:
+                   helper(root_temp.left,sum_temp-root_temp.val,list_temp+[root_temp.left.val]) 
+               if root_temp.right:
+                   helper(root_temp.right,sum_temp-root_temp.val,list_temp+[root_temp.right.val]) 
+           if not root:return []
+           result_lists = []
+           helper(root,sum,[root.val])
+           return result_lists
+       
+   #非递归
+   
+   # Definition for a binary tree node.
+   # class TreeNode(object):
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   
+   class Solution(object):
+       def pathSum(self, root, sum):
+           """
+           :type root: TreeNode
+           :type sum: int
+           :rtype: List[List[int]]
+           """
+           if not root:return []
+           res = []
+           queue = [(root, sum, [root.val])]
+           while queue:
+               curr, val, ls = queue.pop(0)
+               if not curr.left and not curr.right and val == curr.val:
+                   res.append(ls)
+               if curr.left:
+                   queue.append((curr.left, val-curr.val, ls+[curr.left.val]))
+               if curr.right:
+                   queue.append((curr.right, val-curr.val, ls+[curr.right.val]))
+           return res
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for a binary tree node.
+    * public class TreeNode {
+    *     int val;
+    *     TreeNode left;
+    *     TreeNode right;
+    *     TreeNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public List<List<Integer>> pathSum(TreeNode root, int sum) {
+            List<List<Integer>> List=new ArrayList<List<Integer>>();
+   		 List<Integer> sub=new ArrayList<Integer>();
+   		 helperDFS(root,sum,List,sub);
+   		 return List;
+   	 }
+   	 private void helperDFS(TreeNode root,int sum,List<List<Integer>> List, List<Integer> sub ){
+   		 if(root==null) return;
+   		 
+   		 sub.add(root.val);
+   		 //the case of reach the bottom leaf of tree
+   		 if(sum==root.val && root.left==null && root.right==null){
+   			 //Insert a clone of sub into List
+   			 List.add(new ArrayList<Integer>(sub));
+   		 }
+   		 //Recursively through left and right sub tree
+   		 helperDFS(root.left,sum-root.val,List,sub);
+   		 helperDFS(root.right,sum-root.val,List,sub);
+   		 //use Backtracking to deal with if next move is not fit, go back
+   		 sub.remove(sub.size()-1);
+   	}
+       
+   }
+   ```
+
+3. [Path Sum III](https://leetcode.com/problems/path-sum-iii) (437)  
+
+   > Description
+
+   You are given a binary tree in which each node contains an integer value.
+
+   Find the number of paths that sum to a given value.
+
+   The path does not need to start or end at the root or a leaf, but it must go downwards (traveling only from parent nodes to child nodes).
+
+   The tree has no more than 1,000 nodes and the values are in the range -1,000,000 to 1,000,000.
+
+   **Example:**
+
+   ```
+   root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+   
+         10
+        /  \
+       5   -3
+      / \    \
+     3   2   11
+    / \   \
+   3  -2   1
+   
+   Return 3. The paths that sum to 8 are:
+   
+   1.  5 -> 3
+   2.  5 -> 2 -> 1
+   3. -3 -> 11
+   ```
+
+   > Code_Python
+
+   ```python
+   # Definition for a binary tree node.
+   # class TreeNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   
+   class Solution:
+       def pathSum(self, root, sum):
+           """
+           :type root: TreeNode
+           :type sum: int
+           :rtype: int
+           """
+           def helper(root,sum):
+               res = 0
+               if not root:return res
+               if sum==root.val:res+=1
+               res+=helper(root.left,sum-root.val)
+               res+=helper(root.right,sum-root.val)
+               return res
+           if not root:return 0
+           return helper(root,sum)+self.pathSum(root.left,sum)+self.pathSum(root.right,sum)
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for a binary tree node.
+    * public class TreeNode {
+    *     int val;
+    *     TreeNode left;
+    *     TreeNode right;
+    *     TreeNode(int x) { val = x; }
+    * }
+    */
+   class Solution {
+       public int pathSum(TreeNode root, int sum) {
+           if(root == null){
+               return 0;
+           }
+           return dfs(root,sum)+pathSum(root.left,sum)+pathSum(root.right,sum);
+           
+       }
+       private int dfs(TreeNode root,int sum){
+           int res = 0;
+           if(root == null){
+               return res;
+           }
+           if(root.val ==sum){
+               res++;
+           }
+           res+=dfs(root.left,sum-root.val);
+           res+=dfs(root.right,sum-root.val);
+           return res;
+           
+       }
+   }
+   ```
+
+###### 4.4 分解让复杂问题简单化
+
+> 面试题35：复杂链表的复制
+
+1. [Copy List with Random Pointer](https://leetcode.com/problems/copy-list-with-random-pointer) (138)
+
+   > Description
+
+   A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+
+   Return a deep copy of the list.
+
+   > Code_Python
+
+   ```python
+   # Definition for singly-linked list with a random pointer.
+   # class RandomListNode(object):
+   #     def __init__(self, x):
+   #         self.label = x
+   #         self.next = None
+   #         self.random = None
+   
+   class Solution(object):
+       def copyRandomList(self, head):
+           """
+           :type head: RandomListNode
+           :rtype: RandomListNode
+           """
+           clone_dict = {}
+           clone_head = head
+           while clone_head:
+               clone_dict[clone_head]=RandomListNode(clone_head.label)
+               clone_head = clone_head.next
+           clone_head = head
+           while clone_head:
+               clone_dict[clone_head].next = clone_dict[clone_head.next] if clone_head.next else None
+               clone_dict[clone_head].random = clone_dict[clone_head.random] if clone_head.random else None
+               clone_head = clone_head.next
+           return clone_dict[head] if head else None
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+    * Definition for singly-linked list with a random pointer.
+    * class RandomListNode {
+    *     int label;
+    *     RandomListNode next, random;
+    *     RandomListNode(int x) { this.label = x; }
+    * };
+    */
+   public class Solution {
+       public RandomListNode copyRandomList(RandomListNode head) {
+           if (head == null){
+               return null;
+           }
+           Map<RandomListNode,RandomListNode> cloneMap = new HashMap<>();
+           RandomListNode cloneNode = head;
+           while(cloneNode!=null){
+               cloneMap.put(cloneNode,new RandomListNode(cloneNode.label));
+               cloneNode = cloneNode.next;
+               
+           }
+           cloneNode = head;
+           while(cloneNode!=null){
+               if(cloneNode.next!=null){
+                   cloneMap.get(cloneNode).next = cloneMap.get(cloneNode.next);
+               }else{
+                   cloneMap.get(cloneNode).next = null;
+               }
+               if(cloneNode.random!=null){
+                   cloneMap.get(cloneNode).random = cloneMap.get(cloneNode.random);
+               }else{
+                   cloneMap.get(cloneNode).random = null;
+               }
+               cloneNode = cloneNode.next;
+               
+           }
+           return cloneMap.get(head);
+       }
+   }
+   ```
+
+> 面试题36：二叉搜索树与双向链表
+
+1. LeetCode**无
+
+   > Description
+
+   输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向。 
+
+   > Code_Python
+
+   ```python
+   # -*- coding:utf-8 -*-
+   # class TreeNode:
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   class Solution:
+       def Convert(self, pRootOfTree):
+           # write code here
+           def ConvertNode(pRootOfTree):
+               if not pNode:return
+               ConvertNode(pRootOfTree.left)
+               if not head:
+                   head = pRootOfTree
+                   realHead = pRootOfTree
+               else:
+                   head.right = pRootOfTree
+                   pRootOfTree.left = head
+                   head = pRootOfTree
+               ConvertSub(pRootOfTree.right)
+           head = None
+           realHead = None
+           ConvertNode(pRootOfTree)
+           return pHeadOfList
+   ```
+
+   > Code_Java
+
+   ```java
+   /**
+   public class TreeNode {
+       int val = 0;
+       TreeNode left = null;
+       TreeNode right = null;
+   
+       public TreeNode(int val) {
+           this.val = val;
+   
+       }
+   
+   }
+   */
+   public class Solution {
+       TreeNode head = null;
+       TreeNode realHead = null;
+       public TreeNode Convert(TreeNode pRootOfTree) {
+           ConvertSub(pRootOfTree);
+           return realHead;
+       }
+        
+       private void ConvertSub(TreeNode pRootOfTree) {
+           if(pRootOfTree==null) return;
+           ConvertSub(pRootOfTree.left);
+           if (head == null) {
+               head = pRootOfTree;
+               realHead = pRootOfTree;
+           } else {
+               head.right = pRootOfTree;
+               pRootOfTree.left = head;
+               head = pRootOfTree;
+           }
+           ConvertSub(pRootOfTree.right);
+       }
+   }
+   ```
+
+> 面试题37：序列化二叉树
+
+1. [Serialize and Deserialize Binary Tree](https://leetcode.com/problems/serialize-and-deserialize-binary-tree) (297)
+
+   > Description
+
+   Serialization is the process of converting a data structure or object into a sequence of bits so that it can be stored in a file or memory buffer, or transmitted across a network connection link to be reconstructed later in the same or another computer environment.
+
+   Design an algorithm to serialize and deserialize a binary tree. There is no restriction on how your serialization/deserialization algorithm should work. You just need to ensure that a binary tree can be serialized to a string and this string can be deserialized to the original tree structure.
+
+   **Example:** 
+
+   ```
+   You may serialize the following tree:
+   
+       1
+      / \
+     2   3
+        / \
+       4   5
+   
+   as "[1,2,3,null,null,4,5]"
+   ```
+
+   **Clarification:** The above format is the same as [how LeetCode serializes a binary tree](https://leetcode.com/faq/#binary-tree). You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
+
+   **Note:** Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
+
+   > Code_Python
+
+   ```python
+   # Definition for a binary tree node.
+   # class TreeNode(object):
+   #     def __init__(self, x):
+   #         self.val = x
+   #         self.left = None
+   #         self.right = None
+   
+   class Codec:
+   
+       def serialize(self, root):
+           """Encodes a tree to a single string.
+           
+           :type root: TreeNode
+           :rtype: str
+           """
+           if not root:
+               return ''
+           def dfs(node):
+               if node:
+                   res.append(str(node.val))
+                   dfs(node.left)
+                   dfs(node.right)
+               else:
+                   res.append("#")
+           res = []
+           dfs(root)
+           return ' '.join(res)
+   
+   
+           
+   
+       def deserialize(self, data):
+           """Decodes your encoded data to tree.
+           
+           :type data: str
+           :rtype: TreeNode
+           """
+           if len(data) == 0:
+               return None
+           def dfs():
+               val = next(res)
+               if val == '#':
+                   return None
+               node = TreeNode(int(val))
+               node.left = dfs()
+               node.right = dfs()
+               return node
+           res = iter(data.split())
+           return dfs()
+   
+           
+   
+   # Your Codec object will be instantiated and called as such:
+   # codec = Codec()
+   # codec.deserialize(codec.serialize(root))
+   ```
+
+   > Code_Java
+
+   ```java
+   
+   ```
+
+> 面试题38：字符串的排列
+
+1. LeetCode**无
+
+   > Description
+
+   输入一个字符串，打印出该字符串中字符的所有排列。 
+
+   例如输入字符串abc，则打印由字符a,b,c所能排列出来的所有字符串：abc，abc,bac,bca,cab,cba 
+
+   > Code_Python
+
+   ```python
+   class Solution:
+       def permutation(self,arr):
+           if not arr:return
+           res = []
+           self.helper(arr, res, '')
+           return sorted(list(set(res)))
+       def helper(self, arr, res, path):
+           if not arr:
+               res.append(path)
+           else:
+               for i in range(len(arr)):
+                   self.helper(arr[:i] + arr[i+1:], res, path + arr[i])
+   ```
+
+   
